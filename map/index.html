@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Dev</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Leaflet from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+    integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+    crossorigin=""></script>
+
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.2.1/dist/esri-leaflet.js"
+    integrity="sha512-6BBVttv13OVrrUSoGmy9/aIVHateyIEGFaQxqnzCgXT9LNCAQ1Cxxj43R6Eq0ynydS7a7bLLfmEWwXFiO6lW2g=="
+    crossorigin=""></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body{overflow:hidden}
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+body, html {
+    height: 100%;
+    line-height: 1.8;
+}
+/* Full height image header */
+.bgimg-1 {
+    background-position: center;
+    background-size: cover;
+    background-image: url("taj.jpg");
+    min-height: 100%;
+}
+.w3-bar .w3-button {
+    padding: 16px;
+}
+
+#basemaps-wrapper {
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    z-index: 4000;
+    background: white;
+    padding: 10px;
+  }
+  #basemaps {
+    margin-bottom: 5px;
+  }
+  
+.w3-top {z-index: 8000!important;}
+
+.leaflet-touch .leaflet-bar {
+	position:absolute;
+	top:70px;
+	}
+
+#row {
+    margin: 10px -16px;
+}
+
+/* Add padding BETWEEN each column */
+#row,
+#row > .column {
+    padding: 8px;
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+    float: left;
+    width: 33.33%;
+    display: none; /* Hide all elements by default */
+}
+
+/* Clear floats after rows */ 
+#row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Content */
+.content {
+    background-color: white;
+    padding: 10px;
+}
+
+/* The "show" class is added to the filtered elements */
+.show {
+  display: block;
+}
+
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  background-color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.btn:hover {
+  background-color: #ddd;
+}
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	width: auto;
+	height: auto;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: center;
+	border-radius: 2px;
+	}
+.leaflet-popup-content {
+	margin: 13px 19px;
+	line-height: 1.4;
+	}
+.leaflet-popup-content p {
+	margin: 18px 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	     -o-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 4px 4px 0 0;
+	border: none;
+	text-align: center;
+	width: 18px;
+	height: 14px;
+	font: 16px/14px Tahoma, Verdana, sans-serif;
+	color: #c3c3c3;
+	text-decoration: none;
+	font-weight: bold;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover {
+	color: #999;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	}
+
+</style>
+</head>
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-card" id="myNavbar">
+    <a href="#home" class="w3-bar-item w3-button w3-wide">INDIA</a>
+    <!-- Right-sided navbar links -->
+    <div class="w3-right w3-hide-small">
+      <a href="#about" class="w3-bar-item w3-button">ABOUT</a>
+      <a href="#map" class="w3-bar-item w3-button">MAP</a>
+    </div>
+  </div>
+</div>
+
+<!-- Header with full-height image -->
+<header class="bgimg-1 w3-display-container w3-grayscale-min" id="home">
+  <div class="w3-display-left w3-text-white" style="padding:48px">
+    <span class="w3-jumbo w3-hide-small">Reise durch Indien</span><br>
+    <span class="w3-xxlarge w3-hide-large w3-hide-medium">Reise durch Indien</span><br>
+    <span class="w3-large">Was es von Hyderabad nach Delhi Interessantes zu sehen gibt ...</span>
+    <p><a href="#about" class="w3-button w3-white w3-padding-large w3-large w3-margin-top w3-opacity w3-hover-opacity-off">... findest du hier.</a></p>
+  </div> 
+</header>
+
+<!-- About Section -->
+<div class="w3-container" style="padding:128px 16px;height:100vh;overflow:auto;background-image:url('hyderabad.jpg');background-size:cover" id="about">
+  <h3 class="w3-center"><a href="http://www.indi-guide.de/" style="text-decoration:inherit; text-shadow:2px 2px 7px gray;">Sehenswürdigkeiten</a></h3>
+  <p class="w3-center w3-large" style="text-shadow:3px 3px 7px gray;">Eine Reise von Hyderabad/Telangana über Jaipur und Agra nach Delhi</p>
+
+<div id="myBtnContainer" class="w3-center">
+  <button class="btn active" onclick="filterSelection('all')" style="font-weight:bold"> Alle</button>
+  <button class="btn" onclick="filterSelection('Hyderabad')"> Hyderabad</button>
+  <button class="btn" onclick="filterSelection('Nalgonda')"> Nalgonda</button>
+  <button class="btn" onclick="filterSelection('Warangal')"> Warangal</button>
+  <button class="btn" onclick="filterSelection('Jaipur')"> Jaipur</button>
+  <button class="btn" onclick="filterSelection('Agra')"> Agra</button>
+  <button class="btn" onclick="filterSelection('Delhi')"> Delhi</button>
+</div>
+
+<!-- Portfolio Gallery Grid -->
+<div id="row">
+</div>
+</div>
+
+<script src="india.js"></script>
+
+
+
+<!-- Promo Section - "We know design" -->
+<div  style="height:100vh;" id="map">
+  
+
+<div id="basemaps-wrapper" class="leaflet-bar">
+  <select name="basemaps" id="basemaps" onChange="changeBasemap(basemaps)">
+    <option value="Topographic">Topographic</option>
+    <option value="Streets">Streets</option>
+    <option value="NationalGeographic">National Geographic</option>
+    <option value="Oceans">Oceans</option>
+    <option value="Gray">Gray</option>
+    <option value="DarkGray">Dark Gray</option>
+    <option value="Imagery">Imagery</option>
+    <option value="ImageryClarity">Imagery (Clarity)</option>
+    <option value="ImageryFirefly">Imagery (Firefly)</option>
+    <option value="ShadedRelief">Shaded Relief</option>
+    <option value="Physical">Physical</option>
+  </select>
+</div>
+
+<script>
+  var map = L.map('map').setView([22.40, 78.469], 5); // ([17.40, 78.469], 11) for Hyderabad view
+  var layer = L.esri.basemapLayer('Topographic').addTo(map);
+  var layerLabels;
+
+  function setBasemap(basemap) {
+    if (layer) {
+      map.removeLayer(layer);
+    }
+
+    layer = L.esri.basemapLayer(basemap);
+
+    map.addLayer(layer);
+
+    if (layerLabels) {
+      map.removeLayer(layerLabels);
+    }
+
+    if (basemap === 'ShadedRelief'
+     || basemap === 'Oceans'
+     || basemap === 'Gray'
+     || basemap === 'DarkGray'
+     || basemap === 'Terrain'
+   ) {
+      layerLabels = L.esri.basemapLayer(basemap + 'Labels');
+      map.addLayer(layerLabels);
+    } else if (basemap.includes('Imagery')) {
+      layerLabels = L.esri.basemapLayer('ImageryLabels');
+      map.addLayer(layerLabels);
+    }
+  }
+
+  function changeBasemap(basemaps){
+    var basemap = basemaps.value;
+    setBasemap(basemap);
+  }
+
+
+var HydPai1 = L.marker([17.34396047912, 78.50357136172]).bindPopup('<img src="paigah.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d3705691-Reviews-Paigah_Tombs-Hyderabad_Hyderabad_District_Telangana.html">Paigah Tombs</a> - Hyderabad'),
+HydFor2 = L.marker([17.27576841032, 78.36757769372]).bindPopup('<img src="fortgrand.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.fortgrand.com/">Fort Grand (Castle)</a> - Hyderabad'),
+HydQut3 = L.marker([17.3957181812, 78.39887738262]).bindPopup('<img src="qutab.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d3705854-Reviews-Qutab_Shahi_Tombs-Hyderabad_Hyderabad_District_Telangana.html">Qutb Shahi Tombs</a> - Hyderabad'),
+HydGol4 = L.marker([17.38369307252, 78.40045133432]).bindPopup('<img src="golconda.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/AttractionProductDetail-g297586-d12470262-Golconda_Fort_Sound_and_Light_Show_from_Hyderabad_with_Private_Transport-Hyderabad_Hyderabad_District_Telangana.html?from_tpa=true">Golconda Fort</a> - Hyderabad'),
+HydCha5 = L.marker([17.36160590232, 78.47470489172]).bindPopup('<img src="charminar.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d320668-Reviews-Charminar-Hyderabad_Hyderabad_District_Telangana.html">Charminar</a> - Hyderabad'),
+HydMec6 = L.marker([17.36045424322, 78.47341522382]).bindPopup('<img src="mecca.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d3705173-Reviews-Mecca_Masjid-Hyderabad_Hyderabad_District_Telangana.html">Mecca Masjid</a> - Hyderabad'),
+HydCho7 = L.marker([17.35775593442, 78.47168773512]).bindPopup('<img src="chowmahalla.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d1020670-Reviews-Chowmahalla_Palace-Hyderabad_Hyderabad_District_Telangana.html">Chowmahalla Palace</a> - Hyderabad'),
+HydSal8 = L.marker([17.37135564262, 78.48039074692]).bindPopup('<img src="salarjung.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d320681-Reviews-Salar_Jung_Museum-Hyderabad_Hyderabad_District_Telangana.html">Salarjung Museum</a> - Hyderabad'),
+HydLum9 = L.marker([17.40921691922, 78.47260547272]).bindPopup('<img src="lumbini.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d1228084-Reviews-Lumbini_Park-Hyderabad_Hyderabad_District_Telangana.html">Lumbini Park</a> - Hyderabad'),
+HydBir10 = L.marker([17.40615515952, 78.46903301822]).bindPopup('<img src="birla.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d1021934-Reviews-Birla_Mandir-Hyderabad_Hyderabad_District_Telangana.html">Birla Mandir</a> - Hyderabad'),
+HydMou11 = L.marker([17.46697876622, 78.55712001312]).bindPopup('<img src="moulaali.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d3913330-Reviews-Moula_Ali_Dargaha-Hyderabad_Hyderabad_District_Telangana.html">Moula Ali</a> - Hyderabad'),
+HydRam12 = L.marker([17.30952704482, 78.68223938642]).bindPopup('<img src="ramoji.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d636879-Reviews-Ramoji_Film_City-Hyderabad_Hyderabad_District_Telangana.html">Ramoji Film City</a> - Hyderabad'),
+HydFal13 = L.marker([17.33092487182, 78.46729751422]).bindPopup('<img src="falaknuma.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d320672-Reviews-Taj_Falaknuma_Palace-Hyderabad_Hyderabad_District_Telangana.html">Falaknuma Palace</a> - Hyderabad'),
+HydTar14 = L.marker([17.37603216092, 78.37823740432]).bindPopup('<img src="taramati.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Restaurant_Review-g297586-d7960120-Reviews-Taramati_Baradari-Hyderabad_Hyderabad_District_Telangana.html">Taramati Baradari</a> - Hyderabad'),
+HydDur15 = L.marker([17.43021357652, 78.38950622032]).bindPopup('<img src="durgam.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d3187577-Reviews-Durgam_Cheruvu_Lake-Hyderabad_Hyderabad_District_Telangana.html">Durgam Cheruvu</a> - Hyderabad'),
+HydDho16 = L.marker([17.54506855352, 78.49376780192]).bindPopup('<img src="miniature.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Hotel_Review-g297586-d1150070-Reviews-Dhola_ri_Dhani-Hyderabad_Hyderabad_District_Telangana.html">Dhola-Ri-Dhani Miniature Rajasthani Village</a> - Hyderabad'),
+HydShr17 = L.marker([17.41520706162, 78.42608110582]).bindPopup('<img src="jagannath.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d3598152-Reviews-Shri_Jagannath_Temple-Hyderabad_Hyderabad_District_Telangana.html">Shri Jagannath Temple</a> - Hyderabad'),
+HydNiz18 = L.marker([17.36527908862, 78.48204305872]).bindPopup('<img src="nizam.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297586-d3317525-Reviews-Nizam_Museum-Hyderabad_Hyderabad_District_Telangana.html">Nizam Museum</a> / <a href="https://www.tripadvisor.de/Attraction_Review-g297586-d2542488-Reviews-Purani_Haveli-Hyderabad_Hyderabad_District_Telangana.html">Purani Haveli</a> - Hyderabad'),
+HydMad19 = L.marker([17.327866, 78.246604]).bindPopup('<img src="madventure.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://highwayonlyway.com/2014/04/09/high-on-hyderabad-madventure-quad-biking-fun-off-the-road/">Madventure</a> - Hyderabad'),
+HydStm36 = L.marker([17.442276, 78.502162]).bindPopup('<img src="marychurch.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/divine-destinations/hyderabad/st-marys-church.html">St. Marys Church</a> - Hyderabad'),
+
+DelCha19 = L.marker([28.65533, 77.230891]).bindPopup('<img src="chowk.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d311613-Reviews-Chandni_Chowk-New_Delhi_National_Capital_Territory_of_Delhi.html">Chandni Chowk</a> - Delhi'),
+DelInd20 = L.marker([28.612891, 77.231146]).bindPopup('<img src="indiagate.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d321493-Reviews-India_Gate-New_Delhi_National_Capital_Territory_of_Delhi.html">India Gate</a> - Delhi'),
+DelLal21 = L.marker([28.656197, 77.240779]).bindPopup('<img src="rotesfort.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d319701-Reviews-Red_Fort_Lal_Quila-New_Delhi_National_Capital_Territory_of_Delhi.html">Lal Quila (Rotes Fort)</a> - Delhi'),
+DelMah22 = L.marker([28.640697, 77.249470]).bindPopup('<img src="gandhi.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d1976642-Reviews-Raj_Ghat-New_Delhi_National_Capital_Territory_of_Delhi.html">Mahatma Gandhi Denkmal</a> - Delhi'),
+DelPur23 = L.marker([28.609612, 77.243780]).bindPopup('<img src="purana.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d324111-Reviews-Purana_Qila-New_Delhi_National_Capital_Territory_of_Delhi.html">Purana Quila</a> - Delhi'),
+DelTug24 = L.marker([28.514805, 77.260432]).bindPopup('<img src="tughlaqabad.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d2318709-Reviews-Tughluqabad_Fort-New_Delhi_National_Capital_Territory_of_Delhi.html">Tughlaqabad Fort</a> - Delhi'),
+DelJam25 = L.marker([28.650679, 77.233367]).bindPopup('<img src="jamamasjid.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d311619-Reviews-Friday_Mosque_Jama_Masjid-New_Delhi_National_Capital_Territory_of_Delhi.html">Jama Masjid</a> - Delhi'),
+DelQut26 = L.marker([28.524456, 77.185477]).bindPopup('<img src="qutubminar.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d311626-Reviews-Qutub_Minar-New_Delhi_National_Capital_Territory_of_Delhi.html">Qutub Minar</a> - Delhi'),
+DelHum27 = L.marker([28.593208, 77.250780]).bindPopup('<img src="humayun.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304551-d311618-Reviews-Humayun_s_Tomb-New_Delhi_National_Capital_Territory_of_Delhi.html">Humayun-Mausoleum</a> - Delhi'),
+
+AgrTaj28 = L.marker([27.174977, 78.042166]).bindPopup('<img src="taj.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297683-d317329-Reviews-Taj_Mahal-Agra_Agra_District_Uttar_Pradesh.html">Taj Mahal</a> - Agra'),
+AgrFor29 = L.marker([27.179609, 78.020672]).bindPopup('<img src="agrafort.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g297683-d319695-Reviews-Agra_Fort-Agra_Agra_District_Uttar_Pradesh.html">Fort Agra</a> - Agra'),
+AgrFat53 = L.marker([27.09496, 77.66298]).bindPopup('<img src="fatehpur.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g797802-d324659-Reviews-Buland_Darwaza-Fatehpur_Sikri_Agra_District_Uttar_Pradesh.html">Fatehpur Sikri (Panch Mahal, Tor Buland Darwaza)</a> - Agra'),
+
+WarTho30 = L.marker([18.003703, 79.574723]).bindPopup('<img src="thousandpillars.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g735768-d3161445-Reviews-Thousand_Pillar_Temple-Warangal_Warangal_Urban_District_Telangana.html">Thousand Pillars Temple</a> - Warangal'),
+WarRam31 = L.marker([18.259174, 79.943307]).bindPopup('<img src="ramappa.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g735768-d3705184-Reviews-Ramappa_Temple-Warangal_Warangal_Urban_District_Telangana.html">Ramappa Temple</a> - Warangal'),
+WarWar32 = L.marker([17.956397, 79.615402]).bindPopup('<img src="warangalfort.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g735768-d2668325-Reviews-Warangal_Fort-Warangal_Warangal_Urban_District_Telangana.html">Warangal Fort</a> - Warangal'),
+WarBog33 = L.marker([18.476329, 80.500375]).bindPopup('<img src="bogatha.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/nature-discovery/khammam/bogatha-waterfall.html">Bogatha Waterfall</a> - Warangal'),
+WarPak34 = L.marker([17.953452, 80.001513]).bindPopup('<img src="pakhallake.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g735768-d3705300-Reviews-Pakhal_Lake-Warangal_Warangal_Urban_District_Telangana.html">Pakhal Lake - Wildtier- und Safaripark</a> - Warangal'),
+WarLak35 = L.marker([18.148835, 80.063524]).bindPopup('<img src="laknavaram.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g735768-d9811257-Reviews-Laknavaram_Cheruvu-Warangal_Warangal_Urban_District_Telangana.html">Laknavaram Lake</a> - Warangal')
+
+NalMah37 = L.marker([17.229085, 79.088120]).bindPopup('<img src="gandhitemple.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/divine-destinations/nalgonda/mahatma-gandhi.html">Mahatma Gandhi Temple</a> - Nalgonda'),
+NalDev38 = L.marker([16.696549, 78.923224]).bindPopup('<img src="devarakonda.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/heritage-spots/nalgonda/devarakonda-fort.html">Devarakonda Fort</a> - Nalgonda'),
+NalKol39 = L.marker([17.695104, 79.034632]).bindPopup('<img src="kolanupaka.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/heritage-spots/nalgonda/kolanupaka.html">Kolanupaka</a> - Nalgonda'),
+NalNag40 = L.marker([16.576003, 79.312279]).bindPopup('<img src="nagarjuna.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/heritage-spots/nalgonda/nagarjuna-sagar.html">Nagarjuna Sagar</a> - Nalgonda'),
+NalNan41 = L.marker([16.607285, 79.310299]).bindPopup('<img src="nandikonda.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/heritage-spots/nalgonda/nandikonda.html">Nandikonda</a> - Nalgonda'),
+NalRac42 = L.marker([17.181967, 78.805096]).bindPopup('<img src="rachakonda.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/heritage-spots/nalgonda/rachakonda-fort.html">Rachakonda Fort</a> - Nalgonda'),
+NalBho43 = L.marker([17.052336, 79.267170]).bindPopup('<img src="bhongir.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="http://www.telanganatourism.gov.in/partials/destinations/heritage-spots/nalgonda/bhongir-fort.html">Bhongir Fort</a> - Nalgonda')
+
+JaiAmb44 = L.marker([26.985577, 75.851335]).bindPopup('<img src="amberfort.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g1096234-d319875-Reviews-Amber_Fort-Amer_Jaipur_Jaipur_District_Rajasthan.html">Amber Fort / Amber Palast</a> - Jaipur'),
+JaiNah45 = L.marker([26.937294, 75.815526]).bindPopup('<img src="nahargarh.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d311641-Reviews-Nahargarh_Fort-Jaipur_Jaipur_District_Rajasthan.html">Nahargarh Fort</a> - Jaipur'),
+JaiJai46 = L.marker([26.98503, 75.845582]).bindPopup('<img src="jaigarh.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d325116-Reviews-Jaigarh_Fort-Jaipur_Jaipur_District_Rajasthan.html">Jaigarh Fort</a> - Jaipur'),
+JaiSun47 = L.marker([26.917124, 75.852281]).bindPopup('<img src="surya.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d1641277-Reviews-Surya_Mandir-Jaipur_Jaipur_District_Rajasthan.html">Sun Temple (Surya Mandir)</a> - Jaipur'),
+JaiMon48 = L.marker([26.916746, 75.860063]).bindPopup('<img src="monkey.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d311634-Reviews-Monkey_Temple_Galta_Ji-Jaipur_Jaipur_District_Rajasthan.html">Monkey Temple (Hanuman Temple)</a> - Jaipur'),
+JaiHaw49 = L.marker([26.923927, 75.826637]).bindPopup('<img src="hawa.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d317345-Reviews-Hawa_Mahal_Palace_of_Wind-Jaipur_Jaipur_District_Rajasthan.html">Hawa Mahal</a> - Jaipur'),
+JaiWat50 = L.marker([26.953439, 75.846138]).bindPopup('<img src="jalmahal.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d324664-Reviews-Jal_Mahal-Jaipur_Jaipur_District_Rajasthan.html">Water Palace (Jai Mahal)</a> - Jaipur'),
+JaiCit51 = L.marker([26.925723, 75.82369]).bindPopup('<img src="citypalace.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d324468-Reviews-City_Palace_of_Jaipur-Jaipur_Jaipur_District_Rajasthan.html">City Palace</a> - Jaipur'),
+JaiJan52 = L.marker([26.924494, 75.824807]).bindPopup('<img src="jantarmantar.jpg" style="width:200px;height:150px;object-fit:cover"><br><br><a href="https://www.tripadvisor.de/Attraction_Review-g304555-d311635-Reviews-Jantar_Mantar_Jaipur-Jaipur_Jaipur_District_Rajasthan.html">Jantar Mantar</a> - Jaipur')
+
+var cities = L.layerGroup([HydPai1, HydFor2, HydQut3, HydGol4, HydCha5, HydMec6, HydCho7, HydSal8, HydLum9, HydBir10, HydMou11, HydRam12, HydFal13, HydTar14, HydDur15, HydDho16, HydShr17, HydNiz18, HydMad19,DelCha19, DelInd20, DelLal21, DelMah22, DelPur23, DelTug24, DelJam25, DelQut26, DelHum27, AgrTaj28, 
+AgrFor29, WarTho30, WarRam31, WarWar32, WarBog33, WarPak34, WarLak35, HydStm36,HydStm36,NalMah37,NalDev38,NalKol39,NalNag40,NalNan41,NalRac42,NalBho43,JaiAmb44, JaiNah45, JaiJai46, JaiSun47, JaiMon48, JaiHaw49, JaiWat50, JaiCit51, JaiJan52, AgrFat53]);
+
+//var overlayMaps = {"Cities": cities};
+cities.addTo(map);
+
+</script>
+</div>
+
+</body>
+</html>
