@@ -152,3 +152,31 @@ body, html {
 	border-bottom: 1px solid #ddd;
 	border-top: 1px solid #ddd;
 	}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 300px;
+    background-color: white;
+    color: black;
+    text-align: justify;
+    border: 1px solid gray;
+    border-radius: 6px;
+    padding: 15px;
+	box-shadow: 3px 3px 2px hsla(0,0%,0%,.3);
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
