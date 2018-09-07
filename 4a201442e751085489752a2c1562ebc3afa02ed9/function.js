@@ -499,7 +499,7 @@ pois.forEach(function (poi){
 <div class="content">										
 <img src="${poi.foto}" alt="${poi.alt}" style="width:100%; height:300px;object-fit:cover">										
 <div class="w3-container w3-white">										
-<p><b><a href="${poi.link}" target="_blank">${poi.place}</a></b></p>										
+<p class="tooltip"><b><a href="${poi.link}" target="_blank">${poi.place}</a></b><span class="tooltiptext">${poi.text}</span></p>									
 </div>										
 </div>										
 </div>`)
